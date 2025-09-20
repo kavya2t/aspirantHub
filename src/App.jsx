@@ -1,9 +1,13 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./App.css";
+// src/App.jsx
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { AppProvider, useAppContext } from "./context/AppContext";
+import Navbar from "./components/Navbar";
+import TaskDetail from "./pages/TaskDetail";
+import GoalDetail from "./pages/GoalDetail";
+import HabitDetail from "./pages/HabitDetail";
+import Premium from "./pages/Premium";
+import TaskDetails from "./pages/TaskDetail";
 
-// User Pages
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Home from "./pages/Home";
@@ -12,52 +16,101 @@ import Schedule from "./pages/Schedule";
 import Habits from "./pages/Habits";
 import Goals from "./pages/Goals";
 import Profile from "./pages/Profile";
-import Premium from "./pages/Premium";
+import Admin from "./pages/Admin";
+import NotFound from "./pages/NotFound";
 
-// Admin Pages
-import AdminLogin from "./pages/AdminLogin";
-import AdminDashboard from "./pages/AdminDashboard";
-import ManageUsers from "./pages/ManageUsers";
-import ManageContent from "./pages/ManageContent";
+// PrivateRoute component
+function PrivateRoute({ children }) {
+  const { user } = useAppContext();
+  return user ? children : <Navigate to="/login" />;
+}
 
-// Components
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-
-import AppProvider from "./context/AppContext";
+// AdminRoute component
+function AdminRoute({ children }) {
+  const { user } = useAppContext();
+  return user?.role === "admin" ? children : <Navigate to="/" />;
+}
 
 export default function App() {
   return (
     <AppProvider>
       <Router>
-        <div className="d-flex flex-column min-vh-100">
-          <Navbar />
+        <Navbar />
+        <Routes>
+          {/* Public routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/tasks/:id" element={<TaskDetail/>}/>
+          <Route path="/goals/:id" element={<GoalDetail />} />
+          <Route path="/habits/:id" element={<HabitDetail />} />
+          <Route path="/premium" element={<Premium/>} />
+          <Route path="/task-details" element={<TaskDetails />} />
+          
+          {/* Private routes */}
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <Home />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/tasks"
+            element={
+              <PrivateRoute>
+                <Tasks />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/schedule"
+            element={
+              <PrivateRoute>
+                <Schedule />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/habits"
+            element={
+              <PrivateRoute>
+                <Habits />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/goals"
+            element={
+              <PrivateRoute>
+                <Goals />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
 
-          <main className="container my-4 flex-fill">
-      
-            <Routes>
-              {/* User Routes */}
-              <Route path="/" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/home" element={<Home />} />
-              <Route path="/tasks" element={<Tasks />} />
-              <Route path="/schedule" element={<Schedule />} />
-              <Route path="/habits" element={<Habits />} />
-              <Route path="/goals" element={<Goals />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/premium" element={<Premium />} />
+          {/* Admin-only route */}
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <Admin />
+              </AdminRoute>
+            }
+          />
 
-              {/* Admin Routes */}
-              <Route path="/admin-login" element={<AdminLogin />} />
-              <Route path="/admin-dashboard" element={<AdminDashboard />} />
-              <Route path="/manage-users" element={<ManageUsers />} />
-              <Route path="/manage-content" element={<ManageContent />} />
-            </Routes>
-          </main>  
-
-          <Footer />
-        </div>  
+          {/* 404 Not Found */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </Router>
     </AppProvider>
   );
 }
+

@@ -1,52 +1,30 @@
-import React, { useState } from "react";
+// src/pages/Habits.jsx
+import React, { useContext } from "react";
+import { AppContext } from "../context/AppContext";
+import HabitCard from "../components/HabitCard";
+import { useNavigate } from "react-router-dom";
 
 export default function Habits() {
-  const [habits, setHabits] = useState([]);
-  const [habit, setHabit] = useState("");
+  const { habits, markHabitComplete } = useContext(AppContext);
+  const navigate = useNavigate();
 
-  const addHabit = () => {
-    if (habit) {
-      setHabits([...habits, habit]);
-      setHabit("");
-    }
-  };
-
-  const removeHabit = (index) => {
-    const newHabits = habits.filter((_, i) => i !== index);
-    setHabits(newHabits);
+  const handleOpenHabit = (habitId) => {
+    navigate(`/habits/${habitId}`);
   };
 
   return (
     <div>
-      <h2 className="text-center mb-4">Habit Tracker</h2>
-      <div className="d-flex mb-3">
-        <input
-          type="text"
-          className="form-control me-2"
-          placeholder="New habit"
-          value={habit}
-          onChange={(e) => setHabit(e.target.value)}
+      <h3 className="mb-3">My Habits ({habits.length})</h3>
+      {habits.length === 0 && <p className="text-muted">No habits yet. Add one from Home.</p>}
+
+      {habits.map((habit) => (
+        <HabitCard
+          key={habit.id}
+          habit={habit}
+          onToggle={() => markHabitComplete(habit.id)}
+          onClick={() => handleOpenHabit(habit.id)}
         />
-        <button className="btn btn-success" onClick={addHabit}>
-          Add
-        </button>
-      </div>
-      <ul className="list-group">
-        {habits.map((h, index) => (
-          <li
-            key={index}
-            className="list-group-item d-flex justify-content-between align-items-center"
-          >
-            {h}
-            <button
-              className="btn btn-danger btn-sm"
-              onClick={() => removeHabit(index)}
-            >
-              Remove
-            </button>
-          </li>
-        ))}
-      </ul>
+      ))}
     </div>
   );
 }

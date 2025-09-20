@@ -1,20 +1,32 @@
-import React from "react";
+// src/pages/Premium.jsx
+import React, { useContext } from "react";
+import { AppContext } from "../context/AppContext";
 
 export default function Premium() {
-  const handlePayment = () => {
-    alert("Payment gateway integration will go here!");
+  const { user } = useContext(AppContext);
+
+  const handlePayment = (plan) => {
+    alert(`Payment flow for ${plan} plan goes here`);
+    // Integrate Stripe/Razorpay here later
   };
 
   return (
-    <div>
-      <h2 className="text-center mb-4">Premium Membership</h2>
-      <div className="card p-4 shadow text-center">
-        <h4>Unlock all features!</h4>
-        <p>Set unlimited goals, habits, tasks and get premium content.</p>
-        <button className="btn btn-success" onClick={handlePayment}>
-          Subscribe Now
-        </button>
-      </div>
+    <div className="container my-4">
+      <h2>Premium Subscription</h2>
+      {user?.premium ? (
+        <p>🎉 You are a Premium user!</p>
+      ) : (
+        <div>
+          <div className="card p-3 mb-3">
+            <h5>Monthly Plan - $5</h5>
+            <button className="btn btn-primary" onClick={() => handlePayment("Monthly")}>Subscribe</button>
+          </div>
+          <div className="card p-3 mb-3">
+            <h5>Yearly Plan - $50</h5>
+            <button className="btn btn-success" onClick={() => handlePayment("Yearly")}>Subscribe</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

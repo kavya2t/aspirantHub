@@ -1,51 +1,20 @@
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import React from "react";
+import { AppContext } from "../context/AppContext";
 
 export default function Navbar() {
+  const { user } = useContext(AppContext);
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-      <div className="container-fluid">
-        <Link className="navbar-brand" to="/home">
-          AspirantHub
-        </Link>
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
-              <Link className="nav-link" to="/home">
-                Home
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/tasks">
-                Tasks
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/goals">
-                Goals
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/habits">
-                Habits
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/profile">
-                Profile
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </div>
+    <nav className="navbar bg-light p-3">
+      <Link to="/">Home</Link>
+      <Link to="/tasks">Tasks</Link>
+      <Link to="/schedule">Schedule</Link>
+      <Link to="/habits">Habits</Link>
+      <Link to="/goals">Goals</Link>
+      <Link to="/profile">Profile</Link>
+      <Link to="/premium">Premium {user?.premium && <span className="badge bg-warning text-dark ms-2">Premium</span>}</Link>
+      {user?.isAdmin && <Link to="/admin" className="text-danger">Admin</Link>}
     </nav>
   );
 }
